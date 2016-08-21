@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<script src="js/star.js"></script>
+	<script src="js/utils.js"></script>
+	<script src="js/palette.js"></script>
+	<script src="third_party/rhill-voronoi-core.min.js"></script>
+</head>
+<body>
+	<p>
+		Width: <input type="number" id="input_width" value="1500"><br>
+		Height: <input type="number" id="input_height" value="800"><br>
+		<button onclick="make_map()">Make map</button>
+	</p>
+	
+	<canvas id="map_canvas" width="800" height="500" style="background: #000000">
+	Your browser does not support the HTML5 canvas tag.
+	</canvas>
+
+	<script>
+	
+	document.getElementById('input_width').value = document.body.clientWidth;
+
+	function make_map() {
+		var canvas = document.getElementById("map_canvas");
+		canvas.width =  document.getElementById('input_width').value;
+		canvas.height =  document.getElementById('input_height').value;
+		
+		var i = get_random_int(0, palettes.length - 1);
+		var palette = palettes[i];
+		//clear_canvas(canvas);
+		make_map_background(canvas, palette);
+		var context = canvas.getContext("2d");
+				
+		var star_names = [
+			"Pollux",
+			"Deneb",
+			"Sirius",
+			"Arcturus",
+			"Betelgeuse",
+			"Vega",
+			"Altair",
+			"Formalhaut",
+			"Canopus",
+			"Aldebaran",
+			"Taurus",
+			"Eridanus",
+			"Cassiopeia",
+			"Andromeda",
+			"Orion",
+			"Scorpius"
+		];
+		
+		var stars = [];
+		var star_name;
+		var x, y;
+		
+		var x_min = 40;
+		var y_min = 40;
+		var x_max = canvas.width - x_min;
+		var y_max = canvas.height - y_min;
+		
+		for (var i = 0; i < star_names.length; i++) {
+		star_name = star_names[i];
+			x = get_random_int(x_min, x_max);
+			y = get_random_int(y_min, y_max);
+			stars.push(new Star(star_name, x, y, palette.star));
+		}
+		
+
+		var star;
+		for (var i = 0; i < stars.length; i++) {
+			star = stars[i];
+			star.draw_in_context(context);
+		}
+		
+		var voronoi = new Voronoi();
+		var bbox = {xl: 0, xr: canvas.width, yt: 0, yb: canvas.height};
+		var sites = [];
+		for (var i = 0; i < stars.length; i++) {
+			star = stars[i];
+			sites.push({x: star.x, y: star.y});
+		}
+		var diagram = voronoi.compute(sites, bbox);
+
+		context.strokeStyle = '#444444';
+		//context.setLineDash([5]);
+		for (var i = 0; i < diagram.edges.length; i++) {
+			edge = diagram.edges[i];
+			draw_line(context, edge.va, edge.vb);
+		}
+		
+	}
+	</script>
+
+</body>
+</html>
