@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<script src="js/perlin.js"></script>
+	<script src="js/noise.js"></script>
+</head>
+<body>
+	<p>
+		<button onclick="make_map()">Make map</button>
+	</p>
+	
+	<canvas id="map_canvas" width="800" height="500" style="background: #000000">
+	Your browser does not support the HTML5 canvas tag.
+	</canvas>
+
+	<script>
+	
+	function make_map() {
+		var noise = new SmoothNoise(128);
+		
+		var canvas = document.getElementById("map_canvas");
+		canvas.width = 800;
+		canvas.height = 500;
+
+		var context = canvas.getContext("2d");
+		var image = context.createImageData(canvas.width, canvas.height);
+		var data = image.data;
+		var size = 8;
+		var lower_bound = 1;
+		for (var x = 0; x < canvas.width; x++) {
+			for (var y = 0; y < canvas.height; y++) {
+				value = noise.marble(x, y, 1, 1, 8, 256);
+				context.fillStyle = "rgb("+value+","+value+","+value+")";
+				context.fillRect(x, y, 1, 1);
+			}
+		}
+			
+	}
+	</script>
+
+</body>
+</html>

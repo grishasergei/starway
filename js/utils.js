@@ -81,8 +81,26 @@ function add_bg_stars(canvas, palette) {
 
 function add_nebula(canvas, palette) {
 
+	var noise = new SmoothNoise(128);
+	
 	var context = canvas.getContext("2d");
-
+	var lower_bound = 1;
+	var threshold = 0;
+	var alpha = 0.2;
+	var value = 0;
+	var h, s, l;
+	h = 200;
+	for (var x = 0; x < canvas.width; x++) {
+		for (var y = 0; y < canvas.height; y++) {
+			//value = noise.marble(x, y, 1, 1, 50, 256);
+			value = noise.turbulence(x, y, 32, 1);
+			l = Math.floor(value / 255.0 * 100);
+			s = 100 - l;
+			context.fillStyle = "hsl("+h+","+s+"%,"+l+"%)";
+			context.fillRect(x, y, 1, 1);
+		}
+	}
+	/*
 	var x,
 		y,
 		n,
@@ -105,7 +123,7 @@ function add_nebula(canvas, palette) {
 			0);
 
 		gradient.addColorStop(0,"transparent");
-		gradient.addColorStop(1,"rgba(" + color + ", 0.2");
+		gradient.addColorStop(1,'rgba(' + color + ', 0.2)');
 		context.fillStyle = gradient;
 
 		context.fillRect(x - radius, 
@@ -113,7 +131,7 @@ function add_nebula(canvas, palette) {
 						 radius * 2,
 						 radius * 2);	
 	}
-
+	*/
 }
 
 function draw_line(context, p1, p2) {

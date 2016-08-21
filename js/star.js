@@ -25,7 +25,7 @@ function Star(name, x, y, color) {
 			this.x,this.y,0);
 
 		gradient.addColorStop(0,"transparent");
-		gradient.addColorStop(1,"rgba(" + this.color + ", 0.5");
+		gradient.addColorStop(1,"rgba("+ this.color + ", 0.5)");
 		context.fillStyle = gradient;
 
 		context.globalCompositeOperation = "lighter";
