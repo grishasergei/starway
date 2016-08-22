@@ -4,33 +4,95 @@
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<script src="js/perlin.js"></script>
 	<script src="js/noise.js"></script>
+	<script src="js/utils.js"></script>
 </head>
 <body>
 	<p>
-		<button onclick="make_map()">Make map</button>
+		Image size: <input type="number" id="image_size" value="512"><br>
+		Noise size: <input type="number" id="noise_size" value="512"><br>
+
+		Noise type:<br>
+
+		<input type="radio" id="noise_turbulence" name="noise_type" value="turbulence">Turbulence: 
+		Size: <input type="number" id="turbulence_size" value="32">
+		Lower bound: <input type="number" id="turbulence_lower_bound" value="1">
+		<br>
+
+		<input type="radio" id="noise_marble" name="noise_type" value="marble">Marble:
+		X period: <input type="number" id="marble_x_period" value="1">
+		Y period: <input type="number" id="marble_y_period" value="1">
+		Turb power: <input type="number" id="marble_turb_power" value="8">
+		Turb_size: <input type="number" id="marble_turb_size" value="256">
+		<br>
+
+		<input type="radio" id="noise_wood" name="noise_type" value="wood">Wood:
+		X period: <input type="number" id="wood_x_period" value="2">
+		Y period: <input type="number" id="wood_y_period" value="2">
+		Turb power: <input type="number" id="wood_turb_power" value="0.1">
+		Turb_size: <input type="number" id="wood_turb_size" value="32">
+		<br>
+
+		<button onclick="make_map()">Make moise</button><br>
+
 	</p>
 	
-	<canvas id="map_canvas" width="800" height="500" style="background: #000000">
+	<canvas id="map_canvas" width="0" height="0" style="background: #000000">
+	Your browser does not support the HTML5 canvas tag.
+	</canvas>
+	<canvas id="liposome_canvas" width="0" height="0" style="background: #000000">
 	Your browser does not support the HTML5 canvas tag.
 	</canvas>
 
+
 	<script>
-	
 	function make_map() {
-		var noise = new SmoothNoise(128);
+		var image_size = document.getElementById('image_size').value / 1.0;
+		var noise_size = document.getElementById('noise_size').value / 1.0; 
+		var noise_type;
+		if (document.getElementById('noise_turbulence').checked) {
+			noise_type = 'turbulence';
+		}
+		if (document.getElementById('noise_marble').checked) {
+			noise_type = 'marble';
+		}
+		if (document.getElementById('noise_wood').checked) {
+			noise_type = 'wood';
+		}
+
+
+		var noise = new SmoothNoise(noise_size);
 		
 		var canvas = document.getElementById("map_canvas");
-		canvas.width = 800;
-		canvas.height = 500;
+		canvas.width = image_size;
+		canvas.height = image_size;
 
 		var context = canvas.getContext("2d");
 		var image = context.createImageData(canvas.width, canvas.height);
 		var data = image.data;
-		var size = 8;
-		var lower_bound = 1;
+		// turbulence
+		var size = document.getElementById('turbulence_size').value / 1.0;
+		var lower_bound = document.getElementById('turbulence_lower_bound').value / 1.0;
+		// marble
+		var x_period = document.getElementById('marble_x_period').value / 1.0;
+		var y_period = document.getElementById('marble_y_period').value / 1.0;
+		var turb_power = document.getElementById('marble_turb_power').value / 1.0;
+		var turb_size = document.getElementById('marble_turb_size').value / 1.0;
+		// wood
+		var wood_x_period = document.getElementById('wood_x_period').value / 1.0;
+		var wood_y_period = document.getElementById('wood_y_period').value / 1.0;
+		var wood_turb_power = document.getElementById('wood_turb_power').value / 1.0;
+		var wood_turb_size = document.getElementById('wood_turb_size').value / 1.0;
+
+		var value;
 		for (var x = 0; x < canvas.width; x++) {
 			for (var y = 0; y < canvas.height; y++) {
-				value = noise.marble(x, y, 1, 1, 8, 256);
+				switch(noise_type){
+					case 'turbulence': value = noise.turbulence(x, y, size, lower_bound); break;
+					case 'marble': value = noise.marble(x, y, x_period, y_period, turb_power, turb_size); break;
+					case 'wood': value = alue = noise.wood(x, y, wood_x_period, wood_y_period, wood_turb_power, wood_turb_size); break;
+					default: value = 0; break;
+				}
+				//console.log(value);
 				context.fillStyle = "rgb("+value+","+value+","+value+")";
 				context.fillRect(x, y, 1, 1);
 			}

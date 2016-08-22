@@ -44,7 +44,7 @@ SmoothNoise.prototype.turbulence = function(x, y, size, lower_bound) {
 	}
 
 	value = 128.0 * value / initial_size;
-	return value;
+	return Math.floor(value);
 }
 
 SmoothNoise.prototype.marble = function (x, y, x_period, y_period, turb_power, turb_size) {
@@ -57,3 +57,26 @@ SmoothNoise.prototype.marble = function (x, y, x_period, y_period, turb_power, t
 	var sine_value = 256 * Math.abs(Math.sin(xy_value + this.PI));
 	return Math.floor(sine_value);
 }
+
+SmoothNoise.prototype.wood = function (x, y, x_period, y_period, turb_power, turb_size) {
+	var turb_power = turb_power / 1.0;
+	var turb_size = turb_size / 1.0;
+
+	var x_value = (x - this.noise_width / 2) / this.noise_width;
+	var y_value = (y - this.noise_width / 2) / this.noise_width;
+	var distance_value = Math.sqrt(x_value * x_value + y_value * y_value) + 
+						 turb_power * this.turbulence(x, y, turb_size, 1) / 256.0;
+	var sine_value = 128.0 * Math.abs(Math.sin(x_period * y_period * 
+											distance_value * this.PI));
+	return Math.floor(sine_value);
+
+}
+
+
+
+
+
+
+
+
+
